@@ -1,0 +1,3 @@
+\[[0-9]+\]
+./cpppyscan.py,70,if e[0] == '.':
+./cpppyscan.py,142,#e[1]
