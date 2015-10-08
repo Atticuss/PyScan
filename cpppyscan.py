@@ -154,7 +154,7 @@ def searchfile(file):
             for l in f:
                 progresstracker.checksdone += 1
                 if prog.search(l):
-                    resultdict[rule].append('%s,%s,%s'%(file,linenum,l.strip()))
+                    resultdict[rule].append('"%s","%s","%s"'%(file,linenum,l.strip()))
                 linenum += 1
 
 def dumpresults():
