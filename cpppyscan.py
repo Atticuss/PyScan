@@ -2,7 +2,7 @@
 
 from os import walk, path
 from operator import itemgetter
-import sys, getopt, re, argparse
+import sys, getopt, re, argparse, threading
 
 parser = argparse.ArgumentParser(description='Do stuff with files.', prog='cpppyscan.py', usage='%(prog)s [-h, -r, -v, -z, -e <extension(s)>, -i <filename>, -o <filename>] -d|-f <directory|filename>', \
     formatter_class=lambda prog: argparse.HelpFormatter(prog,max_help_position=65, width =150))
@@ -27,6 +27,7 @@ verbose = False
 recursive = True
 errorhandling = False
 resultdict = {}
+progresstracker = None
 
 lcount = 0
 fcount = 0
@@ -49,7 +50,7 @@ def main():
         infile = args.infile
 
     with open(infile,'r') as f:
-        searchrules = [l for l in f]
+        searchrules = [l.strip() for l in f]
 
     for rule in searchrules:
         resultdict[rule] = []
@@ -77,33 +78,50 @@ def main():
 
     errorhandling = args.disableerrorhandling
 
-    if (((type != None) and (tosearch != None)) or linecount or typecount):
-        if errorhandling:
+    if errorhandling:
+        start()
+    else:
+        try:
             start()
-        else:
+        except:
+            printline('[!] An error ocurred:\n')
+            for e in sys.exc_info():
+                printline(e)
+            printline('[*] Note that this script may break on some filetypes when run with 3.4. Please use 2.7')
             try:
-                start()
+                progresstracker.done = True
             except:
-                printline('[!] An error ocurred:\n')
-                for e in sys.exc_info():
-                    printline(e)
-                printline('[*] Note that this script may break on some filetypes when run with 3.4. Please use 2.7')
-    elif help != 1:
-            print('USAGE:\tcpppyscan.py [-h, -r, -v, -p, -c, -t, -z, -l, -e <extension(s)>, -o <filename>, -s <searchterm>] -d|-f <directory|filename>')
-            
+                pass
+           
 def start():
-    global tosearch,targettype,lcount,rcount,fcount
-             
-    #Determine appropriate search
+    global tosearch,targettype,searchrules,progresstracker
+            
     if targettype == 'd':
-        for f in findfiles(tosearch):
-            searchfile(f)
-    elif targettype == 'f':
-        searchfile(tosearch)
+        print('[*] Enumerating all files to search...')
+        files = findfiles(tosearch)
+    else:
+        files = [tosearch]
+
+    print('[*] Getting line count...')
+    numlines = linecount(files)
+    print('[*] Lines to check: %s'%numlines)
+
+    progresstracker = Progress(numlines,len(searchrules))
+    progresstracker.start()
+
+    for f in files:
+        searchfile(f)
+
+    progresstracker.done = True
     dumpresults()
     
-    #Print appropriate results
-    #printline('[*] Search complete. %s lines searched across %s files with %s occurrences found.' % (prettynumbers(lcount), prettynumbers(fcount), prettynumbers(rcount)))
+def linecount(files):
+    count = 0
+    for file in files:
+        with open(file,'r') as f:
+            count += sum([1 for l in f])
+
+    return count
 
 def findfiles(dir):
     global recursive,extfilter
@@ -126,13 +144,15 @@ def findfiles(dir):
         return flist
 
 def searchfile(file):
-    global searchrules,resultdict
+    global searchrules,resultdict,progresstracker
 
     with open(file) as f:
         for rule in searchrules:
-            prog = re.compile(rule)
             linenum = 1
+            f.seek(0)
+            prog = re.compile(rule)
             for l in f:
+                progresstracker.checksdone += 1
                 if prog.search(l):
                     resultdict[rule].append('%s,%s,%s'%(file,linenum,l.strip()))
                 linenum += 1
@@ -145,6 +165,30 @@ def dumpresults():
             f.write('%s\n'%key)
             for value in values:
                 f.write('%s\n'%value)
+
+class Progress(threading.Thread):
+    def __init__(self,numlines,numrules):
+        threading.Thread.__init__(self)
+        self.numchecks = float(numlines * numrules)
+        self.checksdone = 0.0
+        self.done = False
+
+    def run(self):
+        while not self.done:
+            self.progress = self.checksdone / self.numchecks
+            barLength = 20 # Modify this to change the length of the progress bar
+            if isinstance(self.progress, int):
+                self.progress = float(self.progress)
+            if self.progress >= 1:
+                self.progress = 1
+            block = int(round(barLength*self.progress))
+            text = "\r[{0}] {1:.2f}%".format( "#"*block + "-"*(barLength-block), self.progress*100)
+            sys.stdout.write(text)
+            sys.stdout.flush()
+
+        text = "\r[{0}] {1:.2f}%\n".format( "#"*barLength, 100)
+        sys.stdout.write(text)
+        sys.stdout.flush()
 
 if __name__ == "__main__":
     main()
