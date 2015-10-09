@@ -11,7 +11,7 @@ parser.add_argument("-i", "--infile", default="rules.txt", action='store_true', 
 parser.add_argument("-r", "--recursive", action='store_false', help="Do not recursively search all files in the given directory")
 parser.add_argument("-v", "--verbose", action='store_true', help="Turn on (extremely) verbose mode")
 parser.add_argument("-e", "--extension", nargs='?', default=None, help="filetype(s) to restrict search to. seperate lists via commas with no spaces")
-parser.add_argument("-o", "--outfile", default="results.txt", nargs='?', help="specify output file. Default is 'results.txt'. NOTE: will overwrite file if it currently exists")
+parser.add_argument("-o", "--outfile", default="results.csv", nargs='?', help="specify output file. Default is 'results.csv'. NOTE: will overwrite file if it currently exists")
 group.add_argument("-d", "--directory", default=None, help="directory to search")
 group.add_argument("-f", "--file", default=None, help="file to search")
 parser.add_argument("-t", "--threads", default=5)
@@ -207,7 +207,8 @@ class Seeker(threading.Thread):
                 prog = re.compile(rule)
                 for l in f:
                     if prog.search(l):
-                        self.resultdict[rule].append('"%s","%s","%s"'%(file,self.linenum,l.strip()))
+                        #formating done for csv rfc purposes
+                        self.resultdict[rule].append('"%s","%s","%s"'%(file.replace('"','""'),self.linenum,l.strip().replace('"','""')))
                     self.linenum += 1
                 self.lock.acquire()
                 self.progresstracker.checksdone += 1
