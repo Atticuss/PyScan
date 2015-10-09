@@ -179,7 +179,7 @@ class Seeker(threading.Thread):
         threading.Thread.__init__(self)
         self.filequeue = filequeue
         self.resqueue = resqueue
-        self.searchrules = copy.deepcopy(searchrules)
+        self.searchrules = copy.deepcopy(searchrules) #not entirely sure if this is required, but just in case...
         self.progresstracker = progresstracker
         self.lock = lock
         self.done = False
@@ -213,7 +213,7 @@ class Seeker(threading.Thread):
                 self.lock.acquire()
                 self.progresstracker.checksdone += 1
                 self.lock.release()
-        self.resqueue.put(self.resultdict)
+        self.resqueue.put(copy.deepcopy(self.resultdict)) #deep copy to make sure we don't have threads messing with multiple refs to the same dict
 
     def cleardict(self):
         for k,v in self.resultdict.iteritems():
