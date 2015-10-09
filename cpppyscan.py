@@ -207,7 +207,7 @@ class Seeker(threading.Thread):
                 prog = re.compile(rule)
                 for l in f:
                     if prog.search(l):
-                        #formating done for csv rfc purposes
+                        #formatting done for csv rfc purposes
                         self.resultdict[rule].append('"%s","%s","%s"'%(file.replace('"','""'),self.linenum,l.strip().replace('"','""')))
                     self.linenum += 1
                 self.lock.acquire()
@@ -229,7 +229,7 @@ class Progress(threading.Thread):
     def run(self):
         while not self.done:
             self.progress = self.checksdone / self.numchecks
-            barLength = 20 # Modify this to change the length of the progress bar
+            barLength = 20
             if isinstance(self.progress, int):
                 self.progress = float(self.progress)
             if self.progress >= 1:
