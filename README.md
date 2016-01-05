@@ -2,8 +2,9 @@
 Quick and dirty regex scanner for dangerous C++ code
 
 # Usage
-	cpppyscan.py [-h, -r, -v, -z, -e <extension(s)>, -i <filename>, -o <filename>] -d|-f <directory|filename>
-	Do stuff with files.
+	python cpppyscan.py [-h, -r, -v, -z, -e <extension(s)>, -i <filename>, -o <filename>] -d|-f <directory|filename>
+
+# Args
 
 	optional arguments:
 	  -h, --help                               show this help message and exit
