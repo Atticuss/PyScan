@@ -1,3 +1,4 @@
+#- comments may be added by prepending `#- ` to lines. note: SPACE MUST BE INCLUDED
 malloc\(
 calloc\(
 realloc\(
