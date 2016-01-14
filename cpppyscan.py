@@ -206,7 +206,7 @@ class Seeker(threading.Thread):
                 f.seek(0)
                 prog = re.compile(rule)
                 for l in f:
-                    if prog.search(l):
+                    if prog.search(l, flags=re.IGNORECASE):
                         #formatting done for csv rfc purposes
                         self.resultdict[rule].append('"%s","%s","%s"'%(file.replace('"','""'),self.linenum,l.strip().replace('"','""')))
                     self.linenum += 1
