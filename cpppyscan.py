@@ -204,9 +204,9 @@ class Seeker(threading.Thread):
             for rule in self.searchrules:
                 self.linenum = 1
                 f.seek(0)
-                prog = re.compile(rule)
+                prog = re.compile(rule, flags=re.IGNORECASE)
                 for l in f:
-                    if prog.search(l, flags=re.IGNORECASE):
+                    if prog.search(l):
                         #formatting done for csv rfc purposes
                         self.resultdict[rule].append('"%s","%s","%s"'%(file.replace('"','""'),self.linenum,l.strip().replace('"','""')))
                     self.linenum += 1
