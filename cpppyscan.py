@@ -47,7 +47,7 @@ def main():
         infile = args.infile
 
     with open(infile,'r') as f:
-        searchrules = [l.strip() for l in f]
+        searchrules = [l.strip() for l in f if l[:2] != '#-']
 
     for rule in searchrules:
         resultdict[rule] = []
