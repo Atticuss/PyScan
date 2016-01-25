@@ -48,6 +48,13 @@ def main():
 
     with open(infile,'r') as f:
         searchrules = [l.strip() for l in f if l[:3] != '#- ']
+		
+	for rule in searchrules:
+		try:
+			re.compile(rule)
+		except re.error:
+			print('[!] Invalid regex found: %s'%rule)
+			sys.exit(0)
 
     for rule in searchrules:
         resultdict[rule] = []
