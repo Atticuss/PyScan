@@ -103,7 +103,11 @@ def start():
         files = findfiles(tosearch)
     else:
         files = [tosearch]
-
+		
+    if len(files) == 0:
+        print('[!] No files found, exiting...')
+        return
+		
     print('[*] Files to check: %s\n'%len(files))
 
     progresstracker = Progress(len(files),len(searchrules))
@@ -129,7 +133,7 @@ def start():
         print('[!] Unable to open the following files:')
         while not failqueue.empty():
             print('\t%s'%failqueue.get())
-        print('\n')
+        print('')
 
     while not resqueue.empty():
         newdict = resqueue.get()
