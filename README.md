@@ -1,5 +1,5 @@
-# CPPPyScan
-Quick and dirty regex scanner for dangerous C++ code
+# ScanPy
+Quick, dirty, and threaded regex scanner. Included rules file is intended to be used against C++ source.
 
 # Usage
 	python cpppyscan.py [-h, -r, -v, -z, -e <extension(s)>, -i <filename>, -o <filename>] -d|-f <directory|filename>
