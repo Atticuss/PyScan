@@ -4,7 +4,7 @@ from os import walk, path
 from operator import itemgetter
 import sys, getopt, re, argparse, threading, Queue, copy
 
-parser = argparse.ArgumentParser(description='Do stuff with files.', prog='cpppyscan.py', usage='%(prog)s [-h, -r, -v, -z, -e <extension(s)>, -i <filename>, -o <filename>] -d|-f <directory|filename>', \
+parser = argparse.ArgumentParser(description='Do stuff with files.', prog='pyscan.py', usage='%(prog)s [-h, -r, -v, -z, -e <extension(s)>, -i <filename>, -o <filename>] -d|-f <directory|filename>', \
     formatter_class=lambda prog: argparse.HelpFormatter(prog,max_help_position=65, width =150))
 group = parser.add_mutually_exclusive_group(required=True)
 parser.add_argument("-i", "--infile", default="rules.txt", action='store_true', help="File for all regex rules. Default is 'rules.txt'")
